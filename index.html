@@ -1,92 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>INVS Squad Submission</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #121212;
-      color: white;
-      padding: 2rem;
-      max-width: 500px;
-      margin: auto;
-    }
-    input, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 1rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    input {
-      background: #222;
-      color: white;
-    }
-    button {
-      background: #28a745;
-      color: white;
-      cursor: pointer;
-    }
-    .success {
-      color: #00ff99;
-      margin-top: 1rem;
-    }
-  </style>
-</head>
-<body>
+<script>
+  const form = document.getElementById('submitForm');
+  const successMsg = document.getElementById('successMessage');
+  const nameInput = document.getElementById('name');
+  const powerInput = document.getElementById('squadPower');
 
-  <h1>Submit Your Squad Power</h1>
-  <form id="submitForm">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <input type="text" step="any" id="squadPower" placeholder="Squad Power (e.g. 32.5M or 34500000)" required />
-    <button type="submit">Submit</button>
-  </form>
-  <div class="success" id="successMessage"></div>
-
-  <script>
-    const form = document.getElementById('submitForm');
-    const successMsg = document.getElementById('successMessage');
-    const nameInput = document.getElementById('name');
-    const powerInput = document.getElementById('squadPower');
-
-    // Load saved name from localStorage
+  // Load saved name from localStorage on page load
+  window.addEventListener('DOMContentLoaded', () => {
     const savedName = localStorage.getItem('inv_username');
     if (savedName) {
       nameInput.value = savedName;
     }
+  });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = nameInput.value.trim();
-      let squadPowerRaw = powerInput.value.trim().replace(",", "."); // Handle comma decimals
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-      const squadPower = parseFloat(squadPowerRaw);
-      if (!name || isNaN(squadPower)) return;
+    const name = nameInput.value.trim();
+    let squadPowerRaw = powerInput.value.trim().replace(",", "."); // Replace comma with dot
+    const squadPower = parseFloat(squadPowerRaw);
 
-      // Save name to localStorage
+    if (!name || isNaN(squadPower)) {
+      successMsg.textContent = "❌ Invalid input.";
+      return;
+    }
+
+    // Save name to localStorage
+    try {
       localStorage.setItem('inv_username', name);
+    } catch (e) {
+      console.warn("Could not access localStorage:", e);
+    }
 
-      const data = { name, squadPower };
+    const data = { name, squadPower };
 
-      try {
-        console.log("Sending squadPower:", squadPower);
-        const response = await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-        successMsg.textContent = "✅ Submitted successfully!";
-        powerInput.value = ""; // keep name, clear power
-      } catch (error) {
-        successMsg.textContent = "❌ Error submitting. Try again later.";
-        console.error(error);
-      }
-    });
-  </script>
-
-</body>
-</html>
+      successMsg.textContent = "✅ Submitted successfully!";
+      powerInput.value = ""; // Keep name, clear squad power
+    } catch (error) {
+      console.error(error);
+      successMsg.textContent = "❌ Error submitting. Try again later.";
+    }
+  });
+</script>
