@@ -48,13 +48,25 @@
   <script>
     const form = document.getElementById('submitForm');
     const successMsg = document.getElementById('successMessage');
+    const nameInput = document.getElementById('name');
+    const powerInput = document.getElementById('squadPower');
+
+    // Load saved name from localStorage
+    const savedName = localStorage.getItem('inv_username');
+    if (savedName) {
+      nameInput.value = savedName;
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const squadPower = parseFloat(document.getElementById('squadPower').value);
-      
-      if (!name || !squadPower) return;
+      const name = nameInput.value.trim();
+      let squadPowerRaw = powerInput.value.trim().replace(",", "."); // Handle comma decimals
+
+      const squadPower = parseFloat(squadPowerRaw);
+      if (!name || isNaN(squadPower)) return;
+
+      // Save name to localStorage
+      localStorage.setItem('inv_username', name);
 
       const data = { name, squadPower };
 
@@ -62,13 +74,13 @@
         console.log("Sending squadPower:", squadPower);
         const response = await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
           method: 'POST',
-          mode: 'no-cors', // You can change this if needed
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
         successMsg.textContent = "✅ Submitted successfully!";
-        form.reset();
+        powerInput.value = ""; // keep name, clear power
       } catch (error) {
         successMsg.textContent = "❌ Error submitting. Try again later.";
         console.error(error);
