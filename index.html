@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>INVS Squad Submission</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #121212;
+      color: white;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    input {
+      background: #222;
+      color: white;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    .success {
+      color: #00ff99;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Submit Your Squad Power</h1>
+  <form id="submitForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="number" id="squadPower" placeholder="Squad Power (e.g. 34000000)" required />
+    <button type="submit">Submit</button>
+  </form>
+  <div class="success" id="successMessage"></div>
+
+  <script>
+    const form = document.getElementById('submitForm');
+    const successMsg = document.getElementById('successMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const squadPower = parseInt(document.getElementById('squadPower').value);
+
+      if (!name || !squadPower) return;
+
+      const data = { name, squadPower };
+
+      try {
+        const response = await fetch('YOUR_SCRIPT_URL_HERE', {
+          method: 'POST',
+          mode: 'no-cors', // You can change this if needed
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        successMsg.textContent = "✅ Submitted successfully!";
+        form.reset();
+      } catch (error) {
+        successMsg.textContent = "❌ Error submitting. Try again later.";
+        console.error(error);
+      }
+    });
+  </script>
+
+</body>
+</html>
