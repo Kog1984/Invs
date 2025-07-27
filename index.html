@@ -53,6 +53,8 @@
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
       const squadPower = parseFloat(document.getElementById('squadPower').value);
+      // Convert to string with comma (e.g., "9,99") for comma-locale sheets
+      squadPower = parsedPower.toString().replace('.', ',');
       
       if (!name || !squadPower) return;
 
