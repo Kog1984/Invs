@@ -52,7 +52,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
-      const squadPower = parseInt(document.getElementById('squadPower').value);
+      const squadPower = parseFloat(document.getElementById('squadPower').value);
 
       if (!name || !squadPower) return;
 
