@@ -37,63 +37,67 @@
 </head>
 <body>
 
-  <h1>Submit Your Squad Power</h1>
+  <h1>Submit Your First Squad Power</h1>
   <form id="submitForm">
     <input type="text" id="name" placeholder="Your Name" required />
-    <input type="text" step="any" id="squadPower" placeholder="Squad Power (e.g. 32.5M or 34500000)" required />
+    <input type="text" id="squadPower" placeholder="Squad Power (e.g. 32.5M or 34500000)" required />
     <button type="submit">Submit</button>
   </form>
   <div class="success" id="successMessage"></div>
-<script>
-  const form = document.getElementById('submitForm');
-  const successMsg = document.getElementById('successMessage');
-  const nameInput = document.getElementById('name');
-  const powerInput = document.getElementById('squadPower');
 
-  // Load saved name from localStorage on page load
-  window.addEventListener('DOMContentLoaded', () => {
-    const savedName = localStorage.getItem('inv_username');
-    if (savedName) {
-      nameInput.value = savedName;
-    }
-  });
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('submitForm');
+      const successMsg = document.getElementById('successMessage');
+      const nameInput = document.getElementById('name');
+      const powerInput = document.getElementById('squadPower');
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+      // Load saved name
+      const savedName = localStorage.getItem('inv_username');
+      if (savedName) {
+        nameInput.value = savedName;
+      }
 
-    const name = nameInput.value.trim();
-    let squadPowerRaw = powerInput.value.trim().replace(",", "."); // Replace comma with dot
-    const squadPower = parseFloat(squadPowerRaw);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    if (!name || isNaN(squadPower)) {
-      successMsg.textContent = "❌ Invalid input.";
-      return;
-    }
+        const name = nameInput.value.trim();
+        let squadPowerRaw = powerInput.value.trim().replace(",", ".");
+        const squadPower = parseFloat(squadPowerRaw);
 
-    // Save name to localStorage
-    try {
-      localStorage.setItem('inv_username', name);
-    } catch (e) {
-      console.warn("Could not access localStorage:", e);
-    }
+        if (!name || isNaN(squadPower)) {
+          successMsg.textContent = "❌ Invalid input.";
+          return;
+        }
 
-    const data = { name, squadPower };
+        // Save name
+        try {
+          localStorage.setItem('inv_username', name);
+        } catch (err) {
+          console.warn("Storage issue:", err);
+        }
 
-    try {
-      await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        const data = { name, squadPower };
+
+        try {
+          await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          successMsg.textContent = "✅ Submitted successfully!";
+          powerInput.value = "";
+        } catch (err) {
+          console.error("Submission error:", err);
+          successMsg.textContent = "❌ Error submitting. Try again.";
+        }
       });
+    });
+  </script>
 
-      successMsg.textContent = "✅ Submitted successfully!";
-      powerInput.value = ""; // Keep name, clear squad power
-    } catch (error) {
-      console.error(error);
-      successMsg.textContent = "❌ Error submitting. Try again later.";
-    }
-  });
-</script>
 </body>
 </html>
