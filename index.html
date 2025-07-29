@@ -65,9 +65,9 @@
 
 <h1 id="pageTitle">Submit Your Squad Power</h1>
 
-<form action="https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec" method="POST" target="hidden_iframe">
-  <input type="text" name="name" required />
-  <input type="text" name="squadPower" required />
+<form id="submitForm" action="https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec" method="POST" target="hidden_iframe">
+  <input type="text" id="name" name="name" required />
+  <input type="text" id="squadPower" name="squadPower" required />
   <button type="submit">Submit</button>
 </form>
 <iframe name="hidden_iframe" style="display:none;"></iframe>
