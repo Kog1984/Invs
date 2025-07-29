@@ -1,15 +1,16 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-  <title>INVS:First Squad Submission</title>
+  <meta charset="UTF-8" />
   <title>INVS Squad Submission</title>
-<style>
-body {
-font-family: sans-serif;
-@@ -33,69 +33,172 @@
-color: #00ff99;
-margin-top: 1rem;
-}
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #111;
+      color: #00ff99;
+      text-align: center;
+      padding: 2rem;
+    }
     .flag {
       width: 32px;
       height: 24px;
@@ -19,14 +20,28 @@ margin-top: 1rem;
       border: 1px solid #444;
     }
     #langSelector {
-      text-align: center;
       margin-bottom: 1rem;
     }
-</style>
+    input {
+      display: block;
+      margin: 1rem auto;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+    }
+    .success {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Submit Your First Squad Power</h1>
+  <h1>Submit Your Squad Power</h1>
+
   <div id="langSelector">
     <img src="https://flagcdn.com/32x24/gb.png" class="flag" data-lang="en" title="English" alt="English">
     <img src="https://flagcdn.com/32x24/es.png" class="flag" data-lang="es" title="Español" alt="Español">
@@ -36,188 +51,102 @@ margin-top: 1rem;
     <img src="https://flagcdn.com/32x24/pl.png" class="flag" data-lang="pl" title="Polski" alt="Polski">
   </div>
 
-  <h1>Submit Your Squad Power</h1>
-<form id="submitForm">
-<input type="text" id="name" placeholder="Your Name" required />
-    <input type="text" id="squadPower" placeholder="Squad Power (e.g. 32.5M or 34500000)" required />
-    <input type="text" step="any" id="squadPower" placeholder="Squad Power (e.g. 32.5M)" required />
-<button type="submit">Submit</button>
-</form>
-<div class="success" id="successMessage"></div>
+  <form id="submitForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <input type="text" id="squadPower" placeholder="Squad Power (e.g. 32.5M)" required />
+    <button type="submit">Submit</button>
+  </form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('submitForm');
-      const successMsg = document.getElementById('successMessage');
-      const nameInput = document.getElementById('name');
-      const powerInput = document.getElementById('squadPower');
+  <div class="success" id="successMessage"></div>
+
+  <script>
     const translations = {
-      en: {
-        title: "Submit Your Squad Power",
-        name: "Your Name",
-        power: "Squad Power (e.g. 32.5M)",
-        submit: "Submit",
-        success: "✅ Submitted successfully!",
-        error: "❌ Error submitting. Try again later.",
-        invalid: "❌ Invalid input."
-      },
-      es: {
-        title: "Enviar poder del escuadrón",
-        name: "Tu nombre",
-        power: "Poder del escuadrón (p. ej. 32.5M)",
-        submit: "Enviar",
-        success: "✅ ¡Enviado con éxito!",
-        error: "❌ Error al enviar. Intenta más tarde.",
-        invalid: "❌ Entrada no válida."
-      },
-      de: {
-        title: "Sende deine Truppenstärke",
-        name: "Dein Name",
-        power: "Truppenstärke (z. B. 32.5M)",
-        submit: "Senden",
-        success: "✅ Erfolgreich gesendet!",
-        error: "❌ Fehler beim Senden. Versuche es später erneut.",
-        invalid: "❌ Ungültige Eingabe."
-      },
-      fr: {
-        title: "Soumettez votre puissance d'escouade",
-        name: "Votre nom",
-        power: "Puissance d'escouade (ex. 32.5M)",
-        submit: "Soumettre",
-        success: "✅ Envoyé avec succès !",
-        error: "❌ Erreur lors de l'envoi. Réessayez plus tard.",
-        invalid: "❌ Entrée invalide."
-      },
-      it: {
-        title: "Invia la potenza della tua squadra",
-        name: "Il tuo nome",
-        power: "Potenza della squadra (es. 32.5M)",
-        submit: "Invia",
-        success: "✅ Inviato con successo!",
-        error: "❌ Errore nell'invio. Riprova più tardi.",
-        invalid: "❌ Inserimento non valido."
-      },
-      pl: {
-        title: "Prześlij siłę swojej drużyny",
-        name: "Twoje imię",
-        power: "Siła drużyny (np. 32.5M)",
-        submit: "Wyślij",
-        success: "✅ Pomyślnie wysłano!",
-        error: "❌ Błąd podczas wysyłania. Spróbuj później.",
-        invalid: "❌ Nieprawidłowe dane."
-      }
+      en: { title: "Submit Your Squad Power", name: "Your Name", power: "Squad Power (e.g. 32.5M)", submit: "Submit", success: "✅ Submitted successfully!", error: "❌ Error submitting. Try again later.", invalid: "❌ Invalid input." },
+      es: { title: "Enviar poder del escuadrón", name: "Tu nombre", power: "Poder del escuadrón (p. ej. 32.5M)", submit: "Enviar", success: "✅ ¡Enviado con éxito!", error: "❌ Error al enviar.", invalid: "❌ Entrada no válida." },
+      de: { title: "Sende deine Truppenstärke", name: "Dein Name", power: "Truppenstärke (z. B. 32.5M)", submit: "Senden", success: "✅ Erfolgreich gesendet!", error: "❌ Fehler beim Senden.", invalid: "❌ Ungültige Eingabe." },
+      fr: { title: "Soumettez votre puissance d'escouade", name: "Votre nom", power: "Puissance d'escouade (ex. 32.5M)", submit: "Soumettre", success: "✅ Envoyé avec succès !", error: "❌ Erreur lors de l'envoi.", invalid: "❌ Entrée invalide." },
+      it: { title: "Invia la potenza della tua squadra", name: "Il tuo nome", power: "Potenza della squadra (es. 32.5M)", submit: "Invia", success: "✅ Inviato con successo!", error: "❌ Errore nell'invio.", invalid: "❌ Inserimento non valido." },
+      pl: { title: "Prześlij siłę swojej drużyny", name: "Twoje imię", power: "Siła drużyny (np. 32.5M)", submit: "Wyślij", success: "✅ Pomyślnie wysłano!", error: "❌ Błąd podczas wysyłania.", invalid: "❌ Nieprawidłowe dane." }
     };
 
-    const form = document.getElementById('submitForm');
-    const successMsg = document.getElementById('successMessage');
-    const nameInput = document.getElementById('name');
-    const powerInput = document.getElementById('squadPower');
-    const button = form.querySelector('button');
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('submitForm');
+      const nameInput = document.getElementById('name');
+      const powerInput = document.getElementById('squadPower');
+      const successMsg = document.getElementById('successMessage');
+      const button = form.querySelector('button');
 
-    function setLanguage(lang) {
-      const t = translations[lang] || translations.en;
-      document.querySelector("h1").textContent = t.title;
-      nameInput.placeholder = t.name;
-      powerInput.placeholder = t.power;
-      button.textContent = t.submit;
-      successMsg.textContent = "";
-      localStorage.setItem("inv_lang", lang);
-    }
-
-      // Load saved name
-    window.addEventListener('DOMContentLoaded', () => {
-      // Set name if stored
-const savedName = localStorage.getItem('inv_username');
-      if (savedName) {
-        nameInput.value = savedName;
+      // Set language
+      function setLanguage(lang) {
+        const t = translations[lang] || translations.en;
+        document.querySelector("h1").textContent = t.title;
+        nameInput.placeholder = t.name;
+        powerInput.placeholder = t.power;
+        button.textContent = t.submit;
+        successMsg.textContent = "";
+        localStorage.setItem("inv_lang", lang);
       }
+
+      // Handle language flags
+      document.querySelectorAll('.flag').forEach(flag => {
+        flag.addEventListener('click', () => {
+          const selectedLang = flag.dataset.lang;
+          setLanguage(selectedLang);
+        });
+      });
+
+      // Load stored name and language
+      const savedName = localStorage.getItem('inv_username');
       if (savedName) nameInput.value = savedName;
 
-      // Language preference
       const savedLang = localStorage.getItem("inv_lang");
       const browserLang = navigator.language.slice(0, 2).toLowerCase();
       const supported = Object.keys(translations);
       const langToUse = savedLang || (supported.includes(browserLang) ? browserLang : "en");
       setLanguage(langToUse);
-    });
 
+      // Form submit
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-    // Flag change
-    document.querySelectorAll('.flag').forEach(flag => {
-      flag.addEventListener('click', () => {
-        const selectedLang = flag.dataset.lang;
-        setLanguage(selectedLang);
-      });
-    });
-
+        const lang = localStorage.getItem("inv_lang") || "en";
+        const t = translations[lang];
         const name = nameInput.value.trim();
-        let squadPowerRaw = powerInput.value.trim().replace(",", ".");
-        const squadPower = parseFloat(squadPowerRaw);
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = nameInput.value.trim();
-      const squadPowerRaw = powerInput.value.trim().replace(",", ".");
-      const squadPower = parseFloat(squadPowerRaw);
-      const lang = localStorage.getItem("inv_lang") || "en";
-      const t = translations[lang];
+        const powerStr = powerInput.value.trim().replace(",", ".");
+        const squadPower = parseFloat(powerStr);
 
         if (!name || isNaN(squadPower)) {
-          successMsg.textContent = "❌ Invalid input.";
+          successMsg.textContent = t.invalid;
           return;
         }
-      if (!name || isNaN(squadPower)) {
-        successMsg.textContent = t.invalid;
-        return;
-      }
+
+        // Disable inputs
+        nameInput.disabled = true;
+        powerInput.disabled = true;
+        button.disabled = true;
 
         // Save name
-        try {
-          localStorage.setItem('inv_username', name);
-        } catch (err) {
-          console.warn("Storage issue:", err);
-        }
-      // Disable input during submission
-      nameInput.disabled = true;
-      powerInput.disabled = true;
-      button.disabled = true;
-
-        const data = { name, squadPower };
-      try {
         localStorage.setItem('inv_username', name);
-        await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, squadPower })
-        });
 
         try {
           await fetch('https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec', {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, squadPower })
           });
-        successMsg.textContent = t.success;
-        powerInput.value = "";
-      } catch (err) {
-        console.error(err);
-        successMsg.textContent = t.error;
-      }
-
-          successMsg.textContent = "✅ Submitted successfully!";
+          successMsg.textContent = t.success;
           powerInput.value = "";
         } catch (err) {
-          console.error("Submission error:", err);
-          successMsg.textContent = "❌ Error submitting. Try again.";
+          console.error(err);
+          successMsg.textContent = t.error;
         }
+
+        // Re-enable
+        nameInput.disabled = false;
+        powerInput.disabled = false;
+        button.disabled = false;
       });
-      // Re-enable input
-      nameInput.disabled = false;
-      powerInput.disabled = false;
-      button.disabled = false;
-});
-</script>
+    });
+  </script>
+</body>
+</html>
