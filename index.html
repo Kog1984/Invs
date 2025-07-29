@@ -65,11 +65,12 @@
 
 <h1 id="pageTitle">Submit Your Squad Power</h1>
 
-<form id="submitForm" autocomplete="off">
-  <input id="name" type="text" placeholder="Your Name" required />
-  <input id="squadPower" type="text" placeholder="Squad Power (e.g. 32.5M or 34500000)" required />
+<form action="https://script.google.com/macros/s/AKfycbz0Ea_CvxzLn6VM0OpIBcaWzXD-Y8e27jlZ8fSmBFaiccmb3Y7XK_XempA4PAwyM8LV/exec" method="POST" target="hidden_iframe">
+  <input type="text" name="name" required />
+  <input type="text" name="squadPower" required />
   <button type="submit">Submit</button>
 </form>
+<iframe name="hidden_iframe" style="display:none;"></iframe>
 
 <div id="message"></div>
 
