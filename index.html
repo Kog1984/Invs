@@ -107,50 +107,46 @@
       setLanguage(langToUse);
 
       // Form submit
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const lang = localStorage.getItem("inv_lang") || "en";
-  const t = translations[lang];
-  const name = nameInput.value.trim();
-  const powerStr = powerInput.value.trim().replace(",", ".");
-  const squadPower = parseFloat(powerStr);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const lang = localStorage.getItem("inv_lang") || "en";
+        const t = translations[lang];
+        const name = nameInput.value.trim();
+        const powerStr = powerInput.value.trim().replace(",", ".");
+        const squadPower = parseFloat(powerStr);
 
-  if (!name || isNaN(squadPower)) {
-    successMsg.textContent = t.invalid;
-    return;
-  }
+        if (!name || isNaN(squadPower)) {
+          successMsg.textContent = t.invalid;
+          return;
+        }
 
-  // Disable inputs
-  nameInput.disabled = true;
-  powerInput.disabled = true;
-  button.disabled = true;
+        // Disable inputs
+        nameInput.disabled = true;
+        powerInput.disabled = true;
+        button.disabled = true;
 
-  // Save name locally
-  localStorage.setItem('inv_username', name);
-  
-try {
-  await fetch('https://script.google.com/macros/s/AKfycbyIygsUgITI1iZ4cby7l0VAjgmlIQO9ibsYk6sj7P0/dev', {
-       method: 'POST',
-  mode: 'no-cors',  // <- browser won’t block
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name, squadPower })
-});
-successMsg.textContent = t.success;  // Always assume success
-powerInput.value = "";
-    });
-    successMsg.textContent = t.success;
-    powerInput.value = "";
-  } catch (err) {
-    console.error(err);
-    successMsg.textContent = t.error;
-  }
+        // Save name
+        localStorage.setItem('inv_username', name);
 
-  // Re-enable
-  nameInput.disabled = false;
-  powerInput.disabled = false;
-  button.disabled = false;
-});
+        try {
+          await fetch('https://script.google.com/macros/s/AKfycbyIygsUgITI1iZ4cby7l0VAjgmlIQO9ibsYk6sj7P0/dev', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, squadPower })
+          });
+          successMsg.textContent = t.success;
+          powerInput.value = "";
+        } catch (err) {
+          console.error(err);
+          successMsg.textContent = t.error;
+        }
 
+        // Re-enable
+        nameInput.disabled = false;
+        powerInput.disabled = false;
+        button.disabled = false;
+      });
     });
   </script>
 </body>
