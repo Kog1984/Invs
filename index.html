@@ -130,9 +130,13 @@ form.addEventListener('submit', async (e) => {
   
 try {
   await fetch('https://script.google.com/macros/s/AKfycbyIygsUgITI1iZ4cby7l0VAjgmlIQO9ibsYk6sj7P0/dev', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, squadPower })
+       method: 'POST',
+  mode: 'no-cors',  // <- browser won’t block
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ name, squadPower })
+});
+successMsg.textContent = t.success;  // Always assume success
+powerInput.value = "";
     });
     successMsg.textContent = t.success;
     powerInput.value = "";
