@@ -107,49 +107,52 @@
       setLanguage(langToUse);
 
       // Form submit
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const lang = localStorage.getItem("inv_lang") || "en";
-        const t = translations[lang];
-        const name = nameInput.value.trim();
-        const powerStr = powerInput.value.trim().replace(",", ".");
-        const squadPower = parseFloat(powerStr);
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const lang = localStorage.getItem("inv_lang") || "en";
+  const t = translations[lang];
+  const name = nameInput.value.trim();
+  const powerStr = powerInput.value.trim().replace(",", ".");
+  const squadPower = parseFloat(powerStr);
 
-        if (!name || isNaN(squadPower)) {
-          successMsg.textContent = t.invalid;
-          return;
-        }
+  if (!name || isNaN(squadPower)) {
+    successMsg.textContent = t.invalid;
+    return;
+  }
 
-        // Disable inputs
-        nameInput.disabled = true;
-        powerInput.disabled = true;
-        button.disabled = true;
+  // Disable inputs
+  nameInput.disabled = true;
+  powerInput.disabled = true;
+  button.disabled = true;
 
-        // Save name
-        localStorage.setItem('inv_username', name);
+  // Save name
+  localStorage.setItem('inv_username', name);
 
-          const formData = new FormData();
-          formData.append("name", name);
-          formData.append("squadPower", squadPower);
-        
-        try {
-          await fetch('https://script.google.com/macros/s/AKfycbyIygsUgITI1iZ4cby7l0VAjgmlIQO9ibsYk6sj7P0/dev', {
-            method: 'POST',
-            mode: 'no-cors',
-            body: formData
-          });
-          successMsg.textContent = t.success;
-          powerInput.value = "";
-        } catch (err) {
-          console.error(err);
-          successMsg.textContent = t.error;
-        }
+  // Build form data
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("squadPower", squadPower);
 
-        // Re-enable
-        nameInput.disabled = false;
-        powerInput.disabled = false;
-        button.disabled = false;
-      });
+  try {
+    await fetch('https://script.google.com/macros/s/AKfycbyIygsUgITI1iZ4cby7l0VAjgmlIQO9ibsYk6sj7P0/dev', {
+      method: 'POST',
+      mode: 'no-cors', // prevents CORS errors
+      body: formData
+    });
+    // Even though we can’t read the response, we assume success if no network error
+    successMsg.textContent = t.success;
+    powerInput.value = "";
+  } catch (err) {
+    console.error(err);
+    successMsg.textContent = t.error;
+  }
+
+  // Re-enable
+  nameInput.disabled = false;
+  powerInput.disabled = false;
+  button.disabled = false;
+});
+
     });
   </script>
 </body>
