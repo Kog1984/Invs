@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dynamic Spanish Quiz</title>
+<style>
+body { font-family: sans-serif; text-align: center; padding: 30px; }
+.sentence { font-size: 1.5rem; margin: 20px; }
+button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+.quiz-btn { display: block; margin: 10px auto; width: 250px; }
+.result { font-weight: bold; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>Spanish Quiz</h1>
+
+<div class="sentence" id="spanish-sentence">Loading...</div>
+<button onclick="speakSpanish()">🔊 Listen</button>
+
+<h3>What does this mean?</h3>
+<div id="options"></div>
+
+<div class="result" id="result"></div>
+<button onclick="nextQuiz()">Next Quiz</button>
+
+<script>
+// Word banks to generate sentences
+const subjects = ["I", "You", "He", "She", "We", "They"];
+const verbs = ["eat", "like", "read", "watch", "go to", "drink", "play", "see"];
+const objects = ["apples", "books", "TV", "school", "water", "soccer", "movies", "coffee"];
+
+let currentEnglish = '';
+let currentSpanish = '';
+let score = 0;
+
+// Generate a random English sentence
+function generateSentence() {
+  const subj = subjects[Math.floor(Math.random() * subjects.length)];
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  const obj = objects[Math.floor(Math.random() * objects.length)];
+  return `${subj} ${verb} ${obj}`;
+}
+
+// Translate English to Spanish using LibreTranslate API
+async function translateToSpanish(english) {
+  const res = await fetch('https://libretranslate.com/translate', {
+    method: 'POST',
+    body: JSON.stringify({
+      q: english,
+      source: 'en',
+      target: 'es',
+      format: 'text'
+    }),
+    headers: { 'Content-Type': 'application/json' }
+  });
+  const data = await res.json();
+  return data.translatedText;
+}
+
+// Load a new quiz
+async function loadQuiz() {
+  document.getElementById('result').textContent = '';
+  currentEnglish = generateSentence();
+  currentSpanish = await translateToSpanish(currentEnglish);
+  document.getElementById('spanish-sentence').textContent = currentSpanish;
+
+  // Generate multiple-choice options
+  const optionsDiv = document.getElementById('options');
+  optionsDiv.innerHTML = '';
+
+  let options = [currentEnglish];
+  while (options.length < 4) {
+    const randomSentence = generateSentence();
+    if (!options.includes(randomSentence)) options.push(randomSentence);
+  }
+
+  // Shuffle options
+  options.sort(() => Math.random() - 0.5);
+
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.className = 'quiz-btn';
+    btn.onclick = () => checkAnswer(opt);
+    optionsDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(answer) {
+  if (answer === currentEnglish) {
+    document.getElementById('result').textContent = '✅ Correct!';
+    score++;
+  } else {
+    document.getElementById('result').textContent = `❌ Wrong! Correct: ${currentEnglish}`;
+  }
+  console.log('Score:', score);
+}
+
+function nextQuiz() {
+  loadQuiz();
+}
+
+function speakSpanish() {
+  if(!currentSpanish) return;
+  const msg = new SpeechSynthesisUtterance(currentSpanish);
+  msg.lang = 'es-ES';
+  window.speechSynthesis.speak(msg);
+}
+
+// Initialize first quiz
+loadQuiz();
+</script>
+</body>
+</html>
