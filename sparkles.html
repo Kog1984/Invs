@@ -1,88 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sparkles Tasks</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sparkley Tasks</title>
   <style>
-    :root{--bg:#0f1724;--card:#0b1220;--muted:#94a3b8;--accent:#7c3aed}
-    *{box-sizing:border-box}
-    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#071126 0%,#081426 60%);color:#e6eef8}
-    .wrap{width:100%;max-width:920px;padding:24px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:20px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-    h1{margin:0 0 6px;font-size:20px}
-    p.lead{margin:0 0 16px;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
-    .preview{display:flex;flex-direction:column;align-items:center;justify-content:center;height:220px;border-radius:10px;border:1px dashed rgba(255,255,255,0.04);background:linear-gradient(180deg, rgba(124,58,237,0.06), rgba(124,58,237,0.02));}
-    .big{font-size:32px;font-weight:700;text-align:center;white-space:pre-line}
-    .small{font-size:14px;color:var(--muted)}
-    .footer{margin-top:12px;font-size:13px;color:var(--muted)}
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #161b22;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 {
+      color: #58a6ff;
+    }
+    .values {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+    .note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #8b949e;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Sparkles</h1>
-      <p class="lead">Displays which server has sparkles task. Rotates daily starting with <strong>B</strong> today. Resets at <strong>3 AM GMT</strong>.</p>
-
-      <div class="grid">
-        <div class="preview" id="preview">
-          <div class="big" id="active">Loading…</div>
-          <div class="small" id="activeDate">Today</div>
-        </div>
-        <div class="footer">Next rotation (3 AM GMT): <span id="nextRotation">tomorrow</span></div>
-      </div>
-    </div>
+  <div class="card">
+    <h1 id="groupName"></h1>
+    <div class="values" id="values"></div>
+    <div class="note" id="note"></div>
   </div>
-
   <script>
-    const rotations = [
-      { name: 'A', value: '970–973 / 982–986 / 994–996' },
-      { name: 'B', value: '965 / 974–976 / 987–989' },
-      { name: 'C', value: '966–969 / 977–981 / 990–993' }
-    ];
+    const groups = {
+      A: '970–973 / 982–986 / 994–996',
+      B: '965 / 974–976 / 987–989',
+      C: '966–969 / 977–981 / 990–993'
+    };
 
-    // Adjusted offset so that today = B
-    const baseOffset = 2; // ensures today shows B
+    // Anchored rotation start date — known B day
+    const startDate = new Date('2025-10-20T03:00:00Z');
+    const msPerDay = 1000 * 60 * 60 * 24;
 
-    // Function to get rotation index based on 3 AM GMT reset
-    function getRotationIndex() {
+    function updateDisplay() {
       const now = new Date();
-      const utc = now.getTime() + now.getTimezoneOffset() * 60000; // convert to UTC ms
-      const offsetMs = 3 * 3600000; // 3 AM offset
-      const adjusted = utc - offsetMs;
-      const daysSinceEpoch = Math.floor(adjusted / 86400000);
-      return (daysSinceEpoch + baseOffset) % rotations.length;
-    }
+      let daysSinceStart = Math.floor((now - startDate) / msPerDay);
 
-    function updateUI() {
-      const idx = getRotationIndex();
-      const today = rotations[idx];
-      document.getElementById('active').textContent = `${today.name}\n${today.value}`;
-
-      const opts = {year:'numeric',month:'short',day:'numeric'};
-      document.getElementById('activeDate').textContent = new Intl.DateTimeFormat(undefined, opts).format(new Date());
-
-      // Compute next rotation time at 3 AM GMT
-      const now = new Date();
-      const nextRotationUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0);
-      let nextRotation = new Date(nextRotationUTC);
+      // Determine the next reset (3 AM GMT)
+      const nextReset = new Date(now);
+      nextReset.setUTCHours(3, 0, 0, 0);
       if (now.getUTCHours() >= 3) {
-        nextRotation = new Date(nextRotationUTC + 86400000);
+        nextReset.setUTCDate(nextReset.getUTCDate() + 1);
       }
-      document.getElementById('nextRotation').textContent = new Intl.DateTimeFormat(undefined, opts).format(nextRotation);
+
+      // Cycle groups [B, C, A]
+      const order = ['B', 'C', 'A'];
+      const index = ((daysSinceStart % 3) + 3) % 3; // ensure positive mod
+      const currentGroup = order[index];
+
+      // Update DOM
+      document.getElementById('groupName').textContent = currentGroup;
+      document.getElementById('values').textContent = groups[currentGroup];
+
+      const nextGroup = order[(index + 1) % 3];
+      const timeRemaining = nextReset - now;
+      const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+
+      document.getElementById('note').textContent = `Next rotation: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
+
+      // Auto-refresh at reset time
+      setTimeout(() => {
+        location.reload();
+      }, timeRemaining + 2000); // add 2 seconds buffer
     }
 
-    updateUI();
-
-    // Schedule updates to trigger at 3 AM GMT
-    (function scheduleNext(){
-      const now = new Date();
-      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-      const next3amUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 3, 0, 0, 0) + (now.getUTCHours() >= 3 ? 86400000 : 0);
-      const delay = next3amUTC - utc + 100;
-      setTimeout(()=>{ updateUI(); scheduleNext(); }, delay);
-    })();
+    updateDisplay();
+    // Optional: update countdown every minute
+    setInterval(updateDisplay, 60000);
   </script>
 </body>
 </html>
