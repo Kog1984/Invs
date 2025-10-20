@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Offline Spanish Quiz</title>
+<title>API-based Spanish Quiz</title>
 <style>
 body { font-family: sans-serif; text-align: center; padding: 30px; }
 .sentence { font-size: 1.5rem; margin: 20px; }
@@ -24,34 +24,58 @@ button { padding: 10px 20px; margin: 10px; cursor: pointer; }
 <button onclick="nextQuiz()">Next Quiz</button>
 
 <script>
-// Word banks to generate sentences
-const subjects = ["Yo", "Tú", "Él", "Ella", "Nosotros", "Ellos"];
-const verbs = ["como", "bebo", "leo", "veo", "voy a", "juego", "quiero"];
-const objects = ["manzanas", "libros", "TV", "escuela", "agua", "fútbol", "películas", "café"];
+const subjects = ["I", "You", "He", "She", "We", "They"];
+const verbs = ["eat", "drink", "read", "watch", "go to", "play", "want"];
+const objects = {
+  "eat": ["apples", "bread", "rice"],
+  "drink": ["water", "coffee", "milk"],
+  "read": ["book", "newspaper", "magazine"],
+  "watch": ["TV", "movie"],
+  "go to": ["school", "park", "store"],
+  "play": ["soccer", "piano", "chess"],
+  "want": ["coffee", "water", "tea"]
+};
 
-let currentSpanish = '';
 let currentEnglish = '';
+let currentSpanish = '';
 let score = 0;
 
-// English equivalents for options
-const subjectsEn = ["I", "You", "He", "She", "We", "They"];
-const verbsEn = ["eat", "drink", "read", "watch", "go to", "play", "want"];
-const objectsEn = ["apples", "books", "TV", "school", "water", "soccer", "movies", "coffee"];
-
-// Generate a random sentence in Spanish & English
+// Generate a sensible English sentence
 function generateSentence() {
-  const i = Math.floor(Math.random() * subjects.length);
-  const j = Math.floor(Math.random() * verbs.length);
-  const k = Math.floor(Math.random() * objects.length);
+  const subj = subjects[Math.floor(Math.random() * subjects.length)];
+  const verb = verbs[Math.floor(Math.random() * verbs.length)];
+  const objList = objects[verb];
+  const obj = objList[Math.floor(Math.random() * objList.length)];
+  currentEnglish = `${subj} ${verb} ${obj}`;
+}
 
-  currentSpanish = `${subjects[i]} ${verbs[j]} ${objects[k]}`;
-  currentEnglish = `${subjectsEn[i]} ${verbsEn[j]} ${objectsEn[k]}`;
+// Translate English to Spanish via API
+async function translateToSpanish() {
+  try {
+    const res = await fetch('https://libretranslate.com/translate', {
+      method: 'POST',
+      body: JSON.stringify({
+        q: currentEnglish,
+        source: 'en',
+        target: 'es',
+        format: 'text'
+      }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    currentSpanish = data.translatedText;
+  } catch (e) {
+    console.error("Translation failed:", e);
+    currentSpanish = "Translation error";
+  }
 }
 
 // Load a new quiz
-function loadQuiz() {
+async function loadQuiz() {
   document.getElementById('result').textContent = '';
   generateSentence();
+  document.getElementById('spanish-sentence').textContent = "Translating...";
+  await translateToSpanish();
   document.getElementById('spanish-sentence').textContent = currentSpanish;
 
   // Build multiple-choice options
@@ -59,16 +83,11 @@ function loadQuiz() {
   optionsDiv.innerHTML = '';
   let options = [currentEnglish];
 
-  // Generate 3 random wrong answers
   while (options.length < 4) {
-    const i = Math.floor(Math.random() * subjectsEn.length);
-    const j = Math.floor(Math.random() * verbsEn.length);
-    const k = Math.floor(Math.random() * objectsEn.length);
-    const sentence = `${subjectsEn[i]} ${verbsEn[j]} ${objectsEn[k]}`;
-    if (!options.includes(sentence)) options.push(sentence);
+    generateSentence();
+    if (!options.includes(currentEnglish)) options.push(currentEnglish);
   }
 
-  // Shuffle options
   options.sort(() => Math.random() - 0.5);
 
   options.forEach(opt => {
