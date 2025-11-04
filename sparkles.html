@@ -40,14 +40,24 @@
 </head>
 <body>
   <div class="card">
-    <h1 id="groupName"></h1>
+    <h1 id="groupName966"></h1>
+    <div class="values" id="values"></div>
+    <div class="note" id="note"></div>
+  </div>
+    <div class="card">
+    <h1 id="groupName977"></h1>
     <div class="values" id="values"></div>
     <div class="note" id="note"></div>
   </div>
   <script>
-    const groups = {
+    const groups977 = {
       A: '970–973 / 982–986 / 994–996',
-      B: '963-965 / 974–976 / 987–989',
+      B: '965 / 974–976 / 987–989',
+      C: '966–969 / 977–981 / 990–993'
+    };
+    const groups966 = {
+      A: '970–973 / 982–986 / 994–996',
+      B: '963 965 / 974–976 / 987–989',
       C: '966–969 / 977–981 / 990–993'
     };
 
@@ -72,9 +82,10 @@
       const currentGroup = order[index];
 
       // Update DOM
-      document.getElementById('groupName').textContent = currentGroup;
+      document.getElementById('groupName977').textContent = currentGroup;
       document.getElementById('values').textContent = groups[currentGroup];
-
+      document.getElementById('groupName966').textContent = currentGroup;
+      document.getElementById('values').textContent = groups[currentGroup];
       const nextGroup = order[(index + 1) % 3];
       const timeRemaining = nextReset - now;
       const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
