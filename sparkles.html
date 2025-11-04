@@ -15,6 +15,7 @@
       justify-content: center;
       height: 100vh;
       margin: 0;
+      gap: 2rem;
     }
     .card {
       background: #161b22;
@@ -22,9 +23,11 @@
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.3);
       text-align: center;
+      width: 320px;
     }
     h1 {
       color: #58a6ff;
+      margin-bottom: 0.5rem;
     }
     .values {
       margin-top: 1rem;
@@ -41,20 +44,23 @@
 <body>
   <div class="card">
     <h1 id="groupName966"></h1>
-    <div class="values" id="values"></div>
-    <div class="note" id="note"></div>
+    <div class="values" id="values966"></div>
+    <div class="note" id="note966"></div>
   </div>
-    <div class="card">
+
+  <div class="card">
     <h1 id="groupName977"></h1>
-    <div class="values" id="values"></div>
-    <div class="note" id="note"></div>
+    <div class="values" id="values977"></div>
+    <div class="note" id="note977"></div>
   </div>
+
   <script>
     const groups977 = {
       A: '970–973 / 982–986 / 994–996',
       B: '965 / 974–976 / 987–989',
       C: '966–969 / 977–981 / 990–993'
     };
+
     const groups966 = {
       A: '970–973 / 982–986 / 994–996',
       B: '963 965 / 974–976 / 987–989',
@@ -67,40 +73,37 @@
 
     function updateDisplay() {
       const now = new Date();
-      let daysSinceStart = Math.floor((now - startDate) / msPerDay);
+      const daysSinceStart = Math.floor((now - startDate) / msPerDay);
 
-      // Determine the next reset (3 AM GMT)
+      // Determine next reset (3 AM GMT)
       const nextReset = new Date(now);
       nextReset.setUTCHours(3, 0, 0, 0);
-      if (now.getUTCHours() >= 3) {
-        nextReset.setUTCDate(nextReset.getUTCDate() + 1);
-      }
+      if (now.getUTCHours() >= 3) nextReset.setUTCDate(nextReset.getUTCDate() + 1);
 
       // Cycle groups [B, C, A]
       const order = ['B', 'C', 'A'];
-      const index = ((daysSinceStart % 3) + 3) % 3; // ensure positive mod
+      const index = ((daysSinceStart % 3) + 3) % 3;
       const currentGroup = order[index];
-
-      // Update DOM
-      document.getElementById('groupName977').textContent = currentGroup;
-      document.getElementById('values').textContent = groups[currentGroup];
-      document.getElementById('groupName966').textContent = currentGroup;
-      document.getElementById('values').textContent = groups[currentGroup];
       const nextGroup = order[(index + 1) % 3];
+
       const timeRemaining = nextReset - now;
       const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
 
-      document.getElementById('note').textContent = `Next rotation: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
+      // Update both cards
+      document.getElementById('groupName966').textContent = `Group ${currentGroup}`;
+      document.getElementById('values966').textContent = groups966[currentGroup];
+      document.getElementById('note966').textContent = `Next: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
+
+      document.getElementById('groupName977').textContent = `Group ${currentGroup}`;
+      document.getElementById('values977').textContent = groups977[currentGroup];
+      document.getElementById('note977').textContent = `Next: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
 
       // Auto-refresh at reset time
-      setTimeout(() => {
-        location.reload();
-      }, timeRemaining + 2000); // add 2 seconds buffer
+      setTimeout(() => location.reload(), timeRemaining + 2000);
     }
 
     updateDisplay();
-    // Optional: update countdown every minute
     setInterval(updateDisplay, 60000);
   </script>
 </body>
