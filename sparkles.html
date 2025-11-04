@@ -91,11 +91,11 @@
       const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
 
       // Update both cards
-      document.getElementById('groupName966').textContent = `Group ${currentGroup}  — 966`;
+      document.getElementById('groupName966').textContent = `${currentGroup} 966`;
       document.getElementById('values966').textContent = groups966[currentGroup];
       document.getElementById('note966').textContent = `Next: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
 
-      document.getElementById('groupName977').textContent = `Group ${currentGroup} — 977`;
+      document.getElementById('groupName977').textContent = `${currentGroup} 977`;
       document.getElementById('values977').textContent = groups977[currentGroup];
       document.getElementById('note977').textContent = `Next: ${nextGroup} at 3:00 AM GMT (in ${hours}h ${minutes}m)`;
 
